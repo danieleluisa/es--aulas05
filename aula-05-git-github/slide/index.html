@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aula 05 — Git e GitHub</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <section class="slide" data-eyebrow="abertura">
+    <!-- imagem: img/capa.png — ver imagens-aula-05.md #1 -->
+    <p class="eyebrow">Engenharia de Software · Bimestre 01</p>
+    <h1>Git &amp; GitHub<br>na prática</h1>
+    <p class="lede">Aula 05. Hoje a gente abre a pasta <code>.git</code> de
+    verdade — e conecta o projeto de vocês ao GitHub.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="revisão · aula 04">
+    <h2>Revisão rápida</h2>
+    <p class="lede">Um arquivo editado duas vezes no VS Code, dois
+    commits, e um <code>reset --hard</code> pra reaquecer — o mesmo fluxo
+    da aula passada, de novo com as mãos no teclado.</p>
+    <div class="term">
+      <div class="term-bar">
+        <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+        <span class="term-path">recap-aula-04/</span>
+      </div>
+      <div class="term-body">
+        <div class="term-line comment"># cria o repositório .git nesta pasta</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">git init</span></div>
+        <div class="term-line comment"># manda os arquivos pra área de preparação (staging)</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">git add .</span></div>
+        <div class="term-line comment"># grava um snapshot permanente do que foi preparado</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">git commit -m "Cria anotacoes.txt..."</span></div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">git add .</span></div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">git commit -m "Adiciona segunda linha..."</span></div>
+        <div class="term-line comment"># --oneline resume cada commit em uma linha só</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">git log --oneline</span></div>
+        <div class="term-line comment"># desfaz o último commit, mesmo ele já tendo sido salvo</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">git reset --hard HEAD~1</span></div>
+      </div>
+    </div>
+    <p class="payoff">Todo esse histórico, até agora, vive só nessa
+    máquina. É esse ponto que a aula de hoje resolve.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="passo 1 · preparar o terminal">
+    <div class="step-title">
+      <h2>cmd → wsl → Desktop</h2>
+    </div>
+    <div class="callout">
+      <span class="mark">!</span>
+      <p>O path da Área de Trabalho muda de PC pra PC — <code>whoami</code> no
+      WSL não ajuda, porque o usuário do Linux não é o do Windows. Prefere ver
+      visualmente? Abre o Explorador de Arquivos com <code>⊞ Win</code> +
+      <code>E</code> e navega até a Área de Trabalho — o caminho aparece na
+      barra de endereço lá em cima.</p>
+    </div>
+    <div class="term">
+      <div class="term-bar">
+        <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+        <span class="term-path">cmd.exe</span>
+      </div>
+      <div class="term-body">
+        <div class="term-line comment"># entra no ambiente Linux (WSL) a partir do cmd</div>
+        <div class="term-line"><span class="prompt">C:\&gt;</span> <span class="cmd">wsl</span></div>
+        <div class="term-line comment"># descobre o nome de usuario certo neste PC</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">ls /mnt/c/Users/</span></div>
+        <div class="term-line comment"># entra na Área de Trabalho desse usuário</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">cd /mnt/c/Users/<span class="hl">NOME</span>/Desktop</span></div>
+        <div class="term-line comment"># cria a pasta do projeto</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">mkdir es-aula-05</span></div>
+        <div class="term-line comment"># entra na pasta recém-criada</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">cd es-aula-05</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-eyebrow="a pegadinha de hoje">
+    <!-- imagem: img/magica-git.png — ver imagens-aula-05.md #2 -->
+    <span class="kicker-badge">atenção</span>
+    <h2>Vocês vão receber <span class="accent">só isto:</span></h2>
+    <div class="term">
+      <div class="term-bar">
+        <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+        <span class="term-path">es-aula-05/</span>
+      </div>
+      <div class="term-body">
+        <div class="term-line comment"># -a mostra também os arquivos ocultos (que começam com .)</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">ls -la</span></div>
+        <div class="term-line out">.git</div>
+      </div>
+    </div>
+    <p class="lede">Nenhum <code>index.html</code>. Nenhum <code>css/</code>. Só a pasta oculta.
+    O projeto inteiro vai "aparecer" a partir dela.</p>
+    <p class="payoff">Não vê a pasta <code>.git</code> no VS Code? A causa (e o
+    ajuste) tão no fim da aula, no troubleshooting.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="passo 2 · a mágica">
+    <h2>Some. <span class="accent">E volta.</span></h2>
+    <div class="term">
+      <div class="term-bar">
+        <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+        <span class="term-path">es-aula-05/</span>
+      </div>
+      <div class="term-body">
+        <div class="term-line comment"># mostra o que mudou em relação ao último commit</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">git status</span></div>
+        <div class="term-line out">deleted:    index.html</div>
+        <div class="term-line out">deleted:    css/style.css</div>
+        <div class="term-line comment"># traz de volta os arquivos apagados, usando o que já foi commitado</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">git restore .</span></div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">ls -la</span></div>
+        <div class="term-line out hl">css  index.html  sobre</div>
+      </div>
+    </div>
+    <p class="lede">"Deletados"? Vocês nunca chegaram a ter esses arquivos —
+    e um único comando trouxe tudo de volta.</p>
+    <p class="payoff">Só o que foi commitado mora dentro do <code>.git</code>
+    — o que está no <code>.gitignore</code> nunca chega a existir ali, e por
+    isso nunca volta.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="por dentro do .git">
+    <!-- imagem: img/internals-git.png — ver imagens-aula-05.md #3 -->
+    <h2><code>HEAD</code> e a branch: <span class="accent">ponteiro pra ponteiro</span></h2>
+    <div class="term">
+      <div class="term-bar">
+        <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+        <span class="term-path">es-aula-05/</span>
+      </div>
+      <div class="term-body">
+        <div class="term-line comment"># mostra pra qual branch o HEAD está apontando agora</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">cat .git/HEAD</span></div>
+        <div class="term-line out hl">ref: refs/heads/main</div>
+        <div class="term-line comment"># mostra o hash do commit que a branch main aponta</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">cat .git/refs/heads/main</span></div>
+        <div class="term-line out hl">1878ee023677560b204d2427f3a3c900c1c0986b</div>
+      </div>
+    </div>
+    <p class="lede"><code>HEAD</code> não guarda um commit direto — aponta
+    pra <strong>outro arquivo</strong> (a branch), que aponta pro commit.</p>
+    <p class="payoff">Mesmo hash do topo do <code>git log</code>. Uma branch
+    é só um arquivo de texto com um hash dentro.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="por dentro do .git">
+    <h2><code>config</code> — antes do GitHub</h2>
+    <div class="term">
+      <div class="term-bar">
+        <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+        <span class="term-path">es-aula-05/</span>
+      </div>
+      <div class="term-body">
+        <div class="term-line comment"># mostra as configurações locais deste repositório</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">cat .git/config</span></div>
+        <div class="term-line out">[core]</div>
+        <div class="term-line out">    repositoryformatversion = 0</div>
+        <div class="term-line out">    filemode = true</div>
+        <div class="term-line out">    bare = false</div>
+      </div>
+    </div>
+    <p class="lede">Guarda esse arquivo na cabeça — ele ganha uma seção nova
+    daqui a pouco.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="repositório · remote">
+    <!-- imagem: img/remote-github.png — ver imagens-aula-05.md #4 -->
+    <h2>Repositório: <span class="accent">o lugar</span>, não o conteúdo</h2>
+    <p class="body-text"><strong>Repositório</strong>, no sentido amplo da
+    palavra, é só isso: um lugar onde algo fica guardado, armazenado — nem
+    todo repositório é de código. Um repositório de arquivos, de dados, de
+    peças — a palavra não é exclusiva do Git.</p>
+    <p class="body-text">No universo do Git, o que se guarda dentro desse
+    lugar é justamente o <code>.git</code> — o histórico completo de
+    versões de um projeto (<code>objects</code>, <code>refs</code>,
+    <code>HEAD</code>). Até aqui, o "lugar" onde esse <code>.git</code>
+    está guardado é uma única pasta, numa única máquina.</p>
+    <div class="two-col">
+      <div class="tree">
+        <span class="dim"># repositório local</span><br>
+        o lugar: seu HD.<br>
+        o que ele guarda: o <code>.git</code>.
+      </div>
+      <div class="tree">
+        <span class="dim"># repositório no GitHub</span><br>
+        o lugar: um servidor na internet.<br>
+        o que ele guarda: o mesmo <code>.git</code>.
+      </div>
+    </div>
+    <p class="payoff">GitHub é um serviço de hospedagem — ele oferece o
+    "lugar" na internet. O que fica guardado ali dentro é exatamente o
+    <code>.git</code>, por isso <code>clone</code>, <code>push</code> e
+    <code>pull</code> conseguem trafegar esse conteúdo entre sua máquina e
+    o GitHub, do mesmo jeito que trafegariam entre duas máquinas quaisquer.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="remote · criando o repo">
+    <h2>Criando o repositório no GitHub</h2>
+    <ul class="points">
+      <li>Em <code>github.com</code>, clica no <code>+</code> (canto superior direito) → <code>New repository</code></li>
+      <li>Dá um nome e escolhe <code>Public</code> ou <code>Private</code></li>
+      <li>Não marca <code>Add a README</code> — o repo tem que nascer vazio</li>
+      <li>Confirma em <code>Create repository</code></li>
+    </ul>
+    <p class="body-text">Na página do repo recém-criado: botão verde
+    <code>Code</code> → aba <code>SSH</code> → copia a URL. É o que entra no
+    próximo comando.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="autenticação">
+    <!-- imagem: img/chave-ssh.png — ver imagens-aula-05.md #5 -->
+    <h2>Chave SSH: <span class="accent">gerando e cadastrando</span></h2>
+    <p class="body-text">A pública é o cadeado que vocês entregam pro
+    GitHub guardar. A privada é a única chave que abre — e fica só com
+    vocês, nunca sai da máquina.</p>
+    <div class="term">
+      <div class="term-bar">
+        <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+        <span class="term-path">~</span>
+      </div>
+      <div class="term-body">
+        <div class="term-line comment"># gera o par de chaves SSH (pública e privada)</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">ssh-keygen -t ed25519 -C "voce@email.com"</span></div>
+        <div class="term-line comment"># mostra a chave pública, pra copiar</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">cat ~/.ssh/id_ed25519.pub</span></div>
+        <div class="term-line comment"># testa se o GitHub reconhece a chave</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">ssh -T git@github.com</span></div>
+        <div class="term-line out hl">Hi usuario! You've successfully authenticated...</div>
+      </div>
+    </div>
+    <ul class="points">
+      <li>Clica na sua <strong>foto de perfil</strong> (canto superior direito) → <code>Settings</code></li>
+      <li>No menu lateral, entra em <code>SSH and GPG keys</code></li>
+      <li>Botão verde <code>New SSH key</code></li>
+      <li>Em <code>Title</code>, dá um nome pra identificar essa máquina (ex: "meu notebook")</li>
+      <li>Em <code>Key</code>, cola o conteúdo copiado do <code>id_ed25519.pub</code></li>
+      <li>Confirma em <code>Add SSH key</code></li>
+    </ul>
+    <p class="lede">Vendo essa mensagem, a autenticação já está pronta —
+    o próximo <code>git push</code> não vai pedir senha nenhuma.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="remote · na prática">
+    <h2>Cadastrando o remote</h2>
+    <div class="term">
+      <div class="term-bar">
+        <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+        <span class="term-path">es-aula-05/</span>
+      </div>
+      <div class="term-body">
+        <div class="term-line comment"># cadastra o endereço remoto com o apelido "origin"</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">git remote add origin git@github.com:usuario/repo.git</span></div>
+        <div class="term-line comment"># confirma que o endereço foi salvo no config</div>
+        <div class="term-line"><span class="prompt">$</span> <span class="cmd">cat .git/config</span></div>
+        <div class="term-line out">[core] ...</div>
+        <div class="term-line out hl">[remote "origin"]</div>
+        <div class="term-line out hl">    url = git@github.com:usuario/repo.git</div>
+      </div>
+    </div>
+    <p class="payoff"><code>git remote add</code> não fez mágica de rede —
+    só escreveu duas linhas num arquivo texto.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="remote · sincronizando">
+    <h2><code>clone</code>, <code>push</code> e <code>pull</code></h2>
+    <div class="two-col" style="grid-template-columns: 1fr 1fr 1fr;">
+      <div class="tree">
+        <span class="dim"># baixar (1ª vez)</span><br>
+        git clone &lt;url&gt;
+      </div>
+      <div class="tree">
+        <span class="dim"># enviar</span><br>
+        git push -u origin main
+      </div>
+      <div class="tree">
+        <span class="dim"># receber</span><br>
+        git pull
+      </div>
+    </div>
+    <p class="body-text"><code>git clone</code> é o comando de "primeira
+    vez": baixa o repositório inteiro do GitHub (todo o <code>.git</code>) e
+    já cria a pasta local, sem precisar de <code>git init</code> nem
+    <code>git remote add</code> na mão.</p>
+    <p class="body-text">Decompondo <code>git push -u origin main</code>:
+    <code>origin</code> é o <strong>remote</strong> (pra onde vai),
+    <code>main</code> é o <strong>branch</strong> (o que vai), e
+    <code>-u</code> marca os dois como o padrão — só precisa na primeira vez.
+    Depois disso, <code>git push</code> e <code>git pull</code> sozinhos já
+    sabem pra onde ir.</p>
+    <p class="payoff"><code>clone</code> é usado uma vez, quando o
+    repositório local ainda não existe. <code>push</code> e <code>pull</code>
+    são o dia a dia depois disso: flexão pra empurrar o que é seu pra fora,
+    barra pra puxar o que tá lá fora pra perto de você.</p>
+  </section>
+
+  <section class="slide" data-eyebrow="troubleshooting">
+    <span class="kicker-badge">troubleshooting</span>
+    <h2>Cadê o <code>.git</code> no VS Code?</h2>
+    <ul class="points">
+      <li><code>Ctrl</code> + <code>,</code> abre as Settings</li>
+      <li>Buscar <code>files.exclude</code></li>
+      <li>Desmarcar a entrada <code>**/.git</code></li>
+    </ul>
+    <div class="tree">{<br>&nbsp;&nbsp;"files.exclude": {<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">"**/.git"</span>: false<br>&nbsp;&nbsp;}<br>}</div>
+  </section>
+
+  <section class="slide" data-eyebrow="fim da aula 05">
+    <h2>SO, terminal, WSL, Git, GitHub.</h2>
+    <p class="lede">A base da primeira parte do ano está fechada. A seguir:
+    organizar o que se constrói — Python e orientação a objetos.</p>
+  </section>
+
+</div>
+
+<nav class="hud">
+  <button id="prevBtn" aria-label="Slide anterior">‹</button>
+  <div class="hud-mid">
+    <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="hud-meta">
+      <span><span id="counterCurrent">01</span> / <span id="counterTotal">16</span> — <span id="eyebrowLabel">abertura</span></span>
+      <span class="hint">use ← → ou espaço</span>
+    </div>
+  </div>
+  <button id="nextBtn" aria-label="Próximo slide">›</button>
+</nav>
+<script src="js/slide.js"></script>
+</body>
+</html>
